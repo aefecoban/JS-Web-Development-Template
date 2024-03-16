@@ -1,4 +1,5 @@
 const app = require("./app");
+const DBSource = require("./Database/DataSource").default;
 
 const path = require("path");
 const Plugin1 = require("./develop/p1/Plugin1");
@@ -6,12 +7,8 @@ const Plugin1 = require("./develop/p1/Plugin1");
 async function Main() {
     const App = new app({
         Port: 80,
-        DataBaseSettings: {
-            client: "sqlite3",
-            useNullAsDefault: true,
-            connection: {
-                filename: path.join(__dirname, "database.sqlite")
-            }
+        DataBaseSettings : {
+            Source : DBSource
         }
     });
 
