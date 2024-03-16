@@ -2,9 +2,9 @@ const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 
-const Database = require("./systems/Database");
-const ModelLoader = require("./develop/database/ModelLoader");
-const Plugin = require("./plugin");
+const Database = require("./systems/Database").default;
+const Plugin = require("./plugin").default;
+const SessionAPI = require("./systems/SessionAPI").default;
 
 module.exports = class Application {
 
@@ -12,6 +12,7 @@ module.exports = class Application {
     Port = 80;
     DB;
     PluginSystem;
+    SessionAPI;
 
     /**
      * 
@@ -23,6 +24,7 @@ module.exports = class Application {
         this.App = express();
 
         this.DB = new Database(Settings.DataBaseSettings);
+        this.SessionAPI = new SessionAPI();
         this.PluginSystem = new Plugin();
     }
 
@@ -31,6 +33,7 @@ module.exports = class Application {
             Models : this.Models,
             DB : this.DB,
             Settings : this.Settings,
+            SessionAPI : this.SessionAPI,
             App : this.App
         }
     }
@@ -40,16 +43,12 @@ module.exports = class Application {
     }
 
     async Start() {
-        this.Models = ModelLoader(this.DB.GetDB());
-
-        for (const key in this.Models) {
-            await (this.Models[key]).CreateTable();
-        }
+        await this.DB.Init();
 
         this.PluginSystem.RunHook("OnStart", this.#GetArgs());
 
-        this.Route();
         this.MiddleWare();
+        this.Route();
     }
 
     MiddleWare() {
