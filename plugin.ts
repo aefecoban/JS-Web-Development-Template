@@ -1,10 +1,12 @@
-module.exports = class Plugin{
+export default class Plugin{
+
+    private Hooks: { [key: string]: Function[] };
 
     constructor(){
         this.Hooks = {};
     }
 
-    AddHook(HookName, Callback){
+    AddHook(HookName : string, Callback : Function) : void{
         if(this.Hooks[HookName] === undefined){
             this.Hooks[HookName] = [];
         }
@@ -12,11 +14,11 @@ module.exports = class Plugin{
         this.Hooks[HookName].push(Callback);
     }
 
-    GetHook(HookName){
+    GetHook(HookName : string) : Function[] | undefined{
         return this.Hooks[HookName];
     }
 
-    RunHook(HookName, ...args){
+    RunHook(HookName : string, ...args : any[]) : void{
         if(this.Hooks[HookName] === undefined){
             return;
         }
