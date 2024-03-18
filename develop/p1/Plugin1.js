@@ -1,4 +1,4 @@
-const Plugin = require("../../../plugin")
+const Plugin = require("../../plugin")
 
 module.exports = class Anime{
 
